@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>StreamE</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link href="https://fonts.googleapis.com/css?family=Sen&display=swap" rel="stylesheet">
+    <link rel='stylesheet' type='text/css' media='screen' href='./styles/main.css'>
+    <link rel='stylesheet' type='text/css' media='screen' href='./styles/shadow-inset.css'>
+    <script src='./scripts/streamE.js'></script>
+    <script src='./scripts/lz-string.min.js'></script>
+</head>
+<body>
+    <div class="container">
+        <div class="navbar">
+            <div>
+                <h1 style="cursor: pointer;" onclick="resetPage()">StreamE</h1>
+            </div>
+        </div>
+        <div class="search">
+            <div class="searchBox">
+                <input type="search" id="searchbox" onkeyup="debouncedSearch()">
+            </div>
+            <div class="searchBox">
+                <div id="searchResults" style="display: none"></div>
+            </div>
+        </div>
+        <div class="following" id="following">
+            <div id="followingList"></div>
+            <div class="clearContainer">
+                <button class="clearButton" onclick="clearFollowingHash()">Clear<ion-icon name="trash-outline"></ion-icon></button>
+            </div>
+        </div>
+        <div class="titleContent" id="titleContent">
+            <h2 id="titleContentHeader"></h2>
+        </div>
+        <div class="subTitleContent" id="subTitleContent">
+            <h4 id="subTitleContentHeader"></h4>
+        </div>
+        <div class="mainContent shadow-inset-center" id="mainContent">
+            <div id="textContent">
+                <p>
+                    Welcome to the jungle.
+                </p>
+            </div>
+            <div id="videoContent"></div>
+        </div>
+        <div class="footer">
+            <div class="footerContent">
+                <h4>StreamE.tv - &copy; 2020</h4>
+            </div>
+        </div>
+    </div>
+    <script src="https://unpkg.com/ionicons@5.0.0/dist/ionicons.js"></script>
+</body>
+<script src= "https://player.twitch.tv/js/embed/v1.js"></script>
+<script>
+    var debouncedSearch = debounce(search, 350);
+    var searchResults = [];
+    var following = defaultFollowing;
+    var watchingStreamer;
+    var followWatchingStreamer = '<ion-icon name="add-outline" class="followBtn" onclick="followStreamer(watchingStreamer)"></ion-icon>';
+
+    function addSearchResult(searchResult, index) {
+        var platform = !!searchResult.twitch ? 'twitch' : !!searchResult.mixer ? 'mixer' : '';
+        var newSearchResult = "<div id='" + index + "' class='searchResult' onclick='watchSearchResult(" + index + ")'>";
+
+        if (!!searchResult.twitch) {
+            newSearchResult += "<img src='./assets/TwitchGlitchPurple.svg' class='platformImg'>";
+        }
+        else if (!!searchResult.mixer) {
+            newSearchResult += "<img src='./assets/MixerMerge_Dark.svg' class='platformImg'>";
+        }
+        if (!!searchResult.youtube) {
+            newSearchResult += "<img src='./assets/youtube_social_circle_white.png' class='platformImg'>";
+        }
+
+        if (searchResult.logo) {
+            newSearchResult += "<img src='" + searchResult.logo + "' class='searchResultImg'>";
+        }
+
+        newSearchResult += "<span>" + searchResult.username + "</span>";
+
+        var streamerFollowed = false;
+        following.forEach((followed) => {
+            if (followed.username === searchResult.username) {
+                streamerFollowed = true;
+            }
+        });
+
+        if (!streamerFollowed) {
+            newSearchResult += '<ion-icon name="add-outline" class="followBtn" onclick="followSearchResult(' + index + ')"></ion-icon>';
+        }
+
+        newSearchResult += "</div>";
+
+        document.getElementById('searchResults').innerHTML += newSearchResult;
+    }
+
+    function addFollowed(following, index) {
+        var platform = !!following.twitch ? 'twitch' : !!following.mixer ? 'mixer' : '';
+        var newFollow = "<div class='followingContainer' id='" + following.username + "_container" + "'>";
+        newFollow += "<div id='" + following.username + "' class='followingUser' onclick='watchFollowing(\"" + following.username + "\")'>";
+
+        if (!!following.twitch) {
+            newFollow += "<img src='./assets/TwitchGlitchPurple.svg' class='platformImg'>";
+        }
+        if (!!following.mixer) {
+            newFollow += "<img src='./assets/MixerMerge_Dark.svg' class='platformImg'>";
+        }
+        if (!!following.youtube) {
+            newFollow += "<img src='./assets/youtube_social_circle_white.png' class='platformImg'>";
+        }
+
+        newFollow += "<span>" + following.username + "</span>";
+        newFollow += "</div>";
+        newFollow += '<ion-icon name="remove-circle-outline" class="stopFollowing" onclick="stopFollowingStreamer(\'' + following.username + '\')"></ion-icon>';
+        newFollow += "</div>";
+        newFollow += "<br id='" + following.username + "_break" + "' />";
+
+        document.getElementById('followingList').innerHTML += newFollow;
+    }
+
+    function followSearchResult(index) {
+        if (event.stopPropagation) { event.stopPropagation(); }
+
+        followStreamer(searchResults[index]);
+    }
+
+    function followStreamer(streamer) {
+        following.push(streamer);
+
+        updateFollowingHash();
+
+        addFollowed(streamer, following.length - 1);
+
+        if (ENABLE_ONLINE_CALLS) {
+            followingOnline([streamer])
+                .then((res) => {
+                    if (res && res.length === 1) {
+                        if (res[0].live) {
+                            var liveIndicator = "<span class='liveIndicatorDot'></span>";
+
+                            document.getElementById(res[0].username).innerHTML += liveIndicator;
+                        }
+                    }
+                });
+        }
+    }
+
+    function stopFollowingStreamer(streamerUsername) {
+        following.some((followed, index) => {
+            if (followed.username === streamerUsername) {
+                document.getElementById(followed.username + '_container').remove();
+                document.getElementById(followed.username + '_break').remove();
+
+                following.splice(index, 1);
+
+                updateFollowingHash();
+
+                return true;
+            }
+        });
+    }
+
+    function updateFollowingHash() {
+        var followingHashList = [];
+
+        following.forEach((followed) => {
+            var followObj = {
+                username: followed.username
+            };
+
+            if (!!followed.twitch) {
+                followObj.twitch = true;
+            }
+            else if (!!followed.mixer) {
+                followObj.mixer = true;
+            }
+            else if (!!followed.youtube) {
+                followObj.youtube = true;
+                followObj.channelId = followed.channelId;
+            }
+
+            followingHashList.push(followObj);
+        });
+
+        var followingHash = LZString.compressToBase64(JSON.stringify(followingHashList));
+
+        localStorage.setItem('following', followingHash);
+        window.location.hash = followingHash;
+    }
+
+    function checkFollowingOnline() {
+        if (ENABLE_ONLINE_CALLS) {
+            followingOnline(following)
+                .then((res) => {
+                    if (res && res.length > 0) {
+                        following = res;
+
+                        res.forEach((followed) => {
+                            if (followed.live) {
+                                var liveIndicator = "<span class='liveIndicatorDot'></span>";
+
+                                document.getElementById(followed.username).innerHTML += liveIndicator;
+                            }
+                        });
+                    }
+                });
+        }
+    }
+
+    function watchFollowing(streamerUsername) {
+        following.some((followed) => {
+            if (followed.username === streamerUsername) {
+                watchStreamer(followed);
+
+                return true;
+            }
+        });
+    }
+
+    function watchSearchResult(index) {
+        var streamer = searchResults[index];
+
+        following.forEach((followed) => {
+            if (followed.username === streamer.username) {
+                streamer = followed;
+            }
+        });
+
+        watchStreamer(streamer);
+        clearSearchResults();
+        document.getElementById('searchbox').value = "";
+    }
+
+    function watchStreamer(streamer) {
+        var videoContent = "";
+
+        clearVideo();
+
+        watchingStreamer = streamer;
+
+        if (!!streamer.mixer) {
+            videoContent += '<iframe width="100%" height="100%" src="https://mixer.com/embed/player/' + streamer.username + '"></iframe><br />';
+
+            document.getElementById('videoContent').innerHTML = videoContent;
+        }
+        else if (!!streamer.twitch) {
+            var twitchOptions = {
+                width: '100%',
+                height: '100%',
+                channel: streamer.username,
+                layout: 'video-with-chat'
+            };
+
+            new Twitch.Player('videoContent', twitchOptions);
+        }
+        else if (!!streamer.youtube) {
+            videoContent = '<iframe width="100%" height="100%" src="https://www.youtube.com/embed/live_stream?channel=' + streamer.channelId  + '"></iframe>';
+
+            document.getElementById('videoContent').innerHTML = videoContent;
+        }
+
+        var followButton = followWatchingStreamer;
+
+        following.forEach((followed) => {
+            if (followed.username === streamer.username) {
+                followButton = "";
+            }
+        });
+
+        if (streamer.live !== null && streamer.live !== undefined) {
+            var liveIndicator = streamer.live ? "<span class='liveIndicatorDot'></span>" : "";
+
+            document.getElementById('titleContentHeader').innerHTML = followButton + streamer.username + liveIndicator;
+            document.getElementById('subTitleContentHeader').innerText = streamer.title ? streamer.title : "";
+        }
+        else {
+            document.getElementById('titleContentHeader').innerHTML = followButton + streamer.username;
+            document.getElementById('subTitleContentHeader').innerText = streamer.title ? streamer.title : "";
+
+            if (ENABLE_ONLINE_CALLS) {
+                followingOnline([streamer])
+                    .then((res) => {
+                        if (res && res.length === 1) {
+                            var liveIndicator = res[0].live ? "<span class='liveIndicatorDot'></span>" : "";
+
+                            document.getElementById('titleContentHeader').innerHTML = followButton + res[0].username + liveIndicator;
+                            document.getElementById('subTitleContentHeader').innerText = res[0].title ? res[0].title : "";
+                        }
+                    });
+            }
+        }
+    }
+
+    function clearSearchResults() {
+        searchResults = [];
+        document.getElementById('searchResults').innerHTML = "";
+        document.getElementById('searchResults').style.display = 'none';
+    }
+
+
+    function search() {
+        var query = document.getElementById('searchbox').value;
+
+        if (query && query.length >= 3) {
+            document.getElementById('searchResults').style.display = 'block';
+            document.getElementById('searchResults').innerHTML = "";
+
+            if (ENABLE_SEARCH_CALLS) {
+                streamerSearch(query)
+                    .then((results) => {
+                        searchResults = results;
+
+                        searchResults.forEach((result, idx) => {
+                            addSearchResult(result, idx);
+                        });
+                    });
+            }
+        }
+        else {
+            clearSearchResults();
+        }
+    }
+
+    function clearVideo() {
+        watchingStreamer = null;
+        document.getElementById('videoContent').innerHTML = '';
+        document.getElementById('titleContentHeader').innerText = '';
+        document.getElementById('subTitleContentHeader').innerText = '';
+    }
+
+    function resetPage() {
+        var mainContent = document.getElementById('mainContent');
+
+        mainContent.classList = "mainContent";
+        mainContent.offsetWidth; // trick to allow CSS animation to be re-triggered (https://css-tricks.com/restart-css-animation/)
+        mainContent.classList = "mainContent shadow-inset-center";
+
+        clearVideo();
+
+        document.getElementById('textContent').innerHTML = '<p>Welcome to the jungle.</p>';
+
+
+        var liveIndicators = document.getElementsByClassName('liveIndicatorDot');
+
+        while (liveIndicators[0]) {
+            liveIndicators[0].parentNode.removeChild(liveIndicators[0]);
+        }
+
+        clearSearchResults();
+        fillFollowingList();
+        checkFollowingOnline();
+    }
+
+    function getFollowingHash() {
+        if (window.location.hash) {
+            var followingHashArr;
+
+            try {
+                followingHashArr = JSON.parse(LZString.decompressFromBase64(window.location.hash.substring(1)));
+            }
+            catch (ex) {
+                console.log(ex);
+            }
+
+            if (followingHashArr && followingHashArr.length > 0) {
+                following = followingHashArr;
+                updateFollowingHash();
+            }
+        }
+        else if (window.localStorage.getItem('following')) {
+            var followingHash = window.localStorage.getItem('following');
+            var followingHashArr;
+
+            try {
+                followingHashArr = JSON.parse(LZString.decompressFromBase64(followingHash));
+            }
+            catch (ex) {
+                console.log(ex);
+            }
+
+            if (followingHashArr && followingHashArr.length > 0) {
+                following = followingHashArr;
+                window.location.hash = followingHash;
+            }
+        }
+    }
+
+    function fillFollowingList() {
+        document.getElementById('followingList').innerHTML = "";
+
+        following.forEach((follower, index) => {
+            addFollowed(follower, index);
+        });
+    }
+
+    function clearFollowingHash() {
+        document.getElementById('followingList').innerHTML = "";
+        window.localStorage.removeItem('following');
+        window.location.hash = "";
+        following = [];
+
+        if (watchingStreamer) {
+            document.getElementById('titleContent').innerHTML = followWatchingStreamer + document.getElementById('titleContent').innerHTML;
+        }
+    }
+
+    function onPageLoad() {
+        getFollowingHash();
+
+        document.getElementById('searchbox')
+            .addEventListener('search', () => {
+                clearSearchResults();
+            });
+
+        fillFollowingList();
+
+        checkFollowingOnline();
+    }
+
+    window.onload = onPageLoad;
+</script>
+</html>
