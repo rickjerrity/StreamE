@@ -1,8 +1,12 @@
 var followingOnlineUrl = 'https://3xidp6ftp1.execute-api.us-west-2.amazonaws.com/streamE_followingOnline';
 var searchUsernameUrl = 'https://3xidp6ftp1.execute-api.us-west-2.amazonaws.com/streamE_searchUsername';
 
-var ENABLE_ONLINE_CALLS = false;
-var ENABLE_SEARCH_CALLS = false;
+var twitchLinkRootUrl = 'https://twitch.com/';
+var mixerLinkRootUrl = 'https://mixer.com/';
+var youtubeLinkRootUrl = 'https://youtube.com/channel/';
+
+var ENABLE_ONLINE_CALLS = true;
+var ENABLE_SEARCH_CALLS = true;
 
 var defaultFollowing = [
   {
@@ -75,8 +79,7 @@ function followingOnline(following) {
       mode: 'cors',
       method: 'post',
       headers: {
-        'Content-Type': 'application/json',
-        'Origin': 'http://127.0.0.1:8080'
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify(following)
     })
@@ -97,8 +100,7 @@ function streamerSearch(streamer) {
     mode: 'cors',
     method: 'post',
     headers: {
-      'Content-Type': 'application/json',
-      'Origin': 'http://127.0.0.1:8080'
+      'Content-Type': 'application/json'
     },
     body: streamer
   })
@@ -114,6 +116,19 @@ function streamerSearch(streamer) {
   });
 }
 
+function getUniqueStreamerId(streamer) {
+    var platform = streamer.twitch ? "twitch" : streamer.mixer ? "mixer" : streamer.youtube ? "youtube" : "";
+
+    if (platform !== "") {
+        return LZString.compressToBase64(streamer.username + platform);
+    }
+    else {
+        return streamer.username;
+    }
+}
+
+// https://davidwalsh.name/javascript-debounce-function
+//
 // Returns a function, that, as long as it continues to be invoked, will not
 // be triggered. The function will be called after it stops being called for
 // N milliseconds. If `immediate` is passed, trigger the function on the
@@ -131,4 +146,16 @@ function debounce(func, wait, immediate) {
 		timeout = setTimeout(later, wait);
 		if (callNow) func.apply(context, args);
 	};
+}
+
+// https://stackoverflow.com/a/12646864
+//
+/* Randomize array in-place using Durstenfeld shuffle algorithm */
+function shuffleArray(array) {
+  for (var i = array.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var temp = array[i];
+      array[i] = array[j];
+      array[j] = temp;
+  }
 }
