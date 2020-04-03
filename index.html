@@ -1,6 +1,16 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-162125265-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-162125265-1');
+    </script>
+
     <meta charset='utf-8'>
     <meta http-equiv='X-UA-Compatible' content='IE=edge'>
     <title>StreamE</title>
@@ -12,19 +22,29 @@
     <script src='./scripts/lz-string.min.js'></script>
 </head>
 <body>
-    <div class="container">
+    <div id="container">
         <div class="navbar">
             <div>
-                <h1 style="cursor: pointer;" onclick="resetPage()">StreamE</h1>
+                <h1 onclick="resetPage()">StreamE</h1>
             </div>
         </div>
         <div class="search">
-            <div class="searchBox">
-                <input type="search" id="searchbox" onkeyup="debouncedSearch()">
-                <span id="clearSearch" onclick="externalClearSearchResults()">x</span>
+            <div id="openCloseFollowing" class="openClose" onclick="toggleViews(true)">
+                <ion-icon id="closeFollowingArrow" name="arrow-back-circle-outline" size="large"></ion-icon>
+                <ion-icon id="openFollowingArrow" name="arrow-forward-circle-outline" size="large" style="display: none"></ion-icon>
             </div>
-            <div class="searchBox">
-                <div id="searchResults" style="display: none"></div>
+            <div id="searchContainer">
+                <div class="searchBox">
+                    <input type="search" id="searchbox" onkeyup="debouncedSearch()">
+                    <span id="clearSearch" onclick="externalClearSearchResults()">x</span>
+                </div>
+                <div class="searchBox">
+                    <div id="searchResults" style="display: none"></div>
+                </div>
+            </div>
+            <div id="openCloseChat" class="openClose" onclick="toggleViews(false, true)">
+                <ion-icon id="openChatBox" name="chatbox-ellipses-outline" size="large"></ion-icon>
+                <ion-icon id="closeChatBox" name="chatbox-outline" size="large" style="display: none"></ion-icon>
             </div>
         </div>
         <div class="following" id="following">
@@ -32,6 +52,14 @@
             <div class="clearContainer">
                 <button class="clearButton" onclick="clearFollowingHash()">Clear<ion-icon name="trash-outline"></ion-icon></button>
             </div>
+        </div>
+        <div class="chat" id="chat">
+            <span id="youtubeChatWarning">YouTube does not support embedding live chat into websites. Chat will open in a new window.</span>
+            <iframe id="chat_embed"
+                    src=""
+                    height="100%"
+                    width="100%">
+            </iframe>
         </div>
         <div class="titleContent" id="titleContent">
             <h2 id="titleContentHeader"></h2>
@@ -61,6 +89,9 @@
     var searchResults = [];
     var following = defaultFollowing;
     var watchingStreamer;
+
+    var followingOpen = true;
+    var chatOpen = false;
 
     var liveIndicatorDot = "<span class='liveIndicatorDot'></span>";
     var followWatchingStreamer = '<ion-icon id="followerStreamer" name="add-outline" class="followBtn" onclick="followStreamer(watchingStreamer)"></ion-icon>';
@@ -98,6 +129,66 @@
         newSearchResult += "</div>";
 
         document.getElementById('searchResults').innerHTML += newSearchResult;
+    }
+
+    function toggleViews(toggleFollowingList, toggleChat) {
+        let previousChatOpen = chatOpen;
+
+        if (toggleFollowingList) {
+            followingOpen = !followingOpen;
+        }
+        if (toggleChat) {
+            chatOpen = !chatOpen;
+        }
+
+        if (chatOpen && previousChatOpen !== chatOpen) {
+            if (watchingStreamer && watchingStreamer.username) {
+                loadChatForStreamer(watchingStreamer);
+            }
+        }
+        else if (!chatOpen) {
+            document.getElementById('chat_embed').src = "";
+            document.getElementById('youtubeChatWarning').style.display = "none";
+        }
+
+        var followingView = followingOpen ? 'following ' : '';
+        var chatView = chatOpen ? ' chat' : '';
+
+        var newContainer = '';
+
+        newContainer += '"' + (followingOpen ? 'navbar ' : '') + 'navbar' + (chatOpen ? ' navbar' : '') + '"';
+        newContainer += '"' + followingView + 'search' + chatView + '"';
+        newContainer += '"' + followingView + 'titleContent' + chatView + '"';
+        newContainer += '"' + followingView + 'mainContent' + chatView + '"';
+        newContainer += '"' + followingView + 'subTitleContent' + chatView + '"';
+        newContainer += '"' + (followingOpen ? 'footer ' : '') + 'footer' + (chatOpen ? ' footer' : '') + '"';
+
+        document.getElementById('container').style.gridTemplateAreas = newContainer;
+
+        var firstColumn = followingOpen ? "200px " : "";
+        var secondColumn = followingOpen && chatOpen ? "8.5fr" : followingOpen ? "auto" : chatOpen ? "8.5fr" : "auto";
+        var thirdColumn = chatOpen ? " 1.5fr" : "";
+
+        document.getElementById('container').style.gridTemplateColumns =  firstColumn + secondColumn + thirdColumn;
+
+        document.getElementById('following').style.display = followingOpen ? "block" : "none";
+        document.getElementById('chat').style.display = chatOpen ? "block" : "none";
+
+        document.getElementById('openFollowingArrow').style.display = followingOpen ? 'none' : 'block';
+        document.getElementById('closeFollowingArrow').style.display = followingOpen ? 'block' : 'none';
+
+        document.getElementById('openChatBox').style.display = chatOpen ? 'none' : 'block';
+        document.getElementById('closeChatBox').style.display = chatOpen ? 'block' : 'none';
+
+        var centerMarginLeft = followingOpen ? "-200px" : "0px";
+        var centerMarginRight = chatOpen ? "-18%" : "0px";
+
+        document.getElementById('searchContainer').style.marginLeft = centerMarginLeft;
+        document.getElementById('searchContainer').style.marginRight = centerMarginRight;
+        document.getElementById('titleContent').style.marginLeft = centerMarginLeft;
+        document.getElementById('titleContent').style.marginRight = centerMarginRight;
+        document.getElementById('subTitleContent').style.marginLeft = centerMarginLeft;
+        document.getElementById('subTitleContent').style.marginRight = centerMarginRight;
     }
 
     function addFollowed(following, index) {
@@ -253,6 +344,27 @@
         document.getElementById('searchbox').value = "";
     }
 
+    function loadChatForStreamer(streamer) {
+        if (streamer && streamer.username) {
+            if (streamer.twitch) {
+                document.getElementById('chat_embed').src = "https://www.twitch.tv/embed/" + streamer.username + "/chat?darkpopout&parent=" + window.location.hostname;
+                document.getElementById('youtubeChatWarning').style.display = "none";
+            }
+            else if (streamer.mixer) {
+                document.getElementById('chat_embed').src = "https://mixer.com/embed/chat/" + streamer.username;
+                document.getElementById('youtubeChatWarning').style.display = "none";
+            }
+            else if (streamer.youtube) {
+                if (streamer.videoId) {
+                    document.getElementById('chat_embed').src = "";
+                    document.getElementById('youtubeChatWarning').style.display = "block";
+
+                    window.open('https://www.youtube.com/live_chat?v=' + streamer.videoId);
+                }
+            }
+        }
+    }
+
     function watchStreamer(streamer) {
         var videoContent = "";
         var streamerLink = '<a target="_blank" href="';
@@ -286,6 +398,10 @@
             document.getElementById('videoContent').innerHTML = videoContent;
         }
 
+        if (chatOpen) {
+            loadChatForStreamer(streamer);
+        }
+
         var followButton = followWatchingStreamer;
 
         following.forEach((followed) => {
@@ -294,15 +410,23 @@
             }
         });
 
+        let streamTitle = streamer.title ? streamer.title : "";
+        let category = streamer.category ? streamer.category : "";
+
+        let subTitle = streamTitle;
+        if (category !== "") {
+            subTitle += " - " + category;
+        }
+
         if (streamer.live !== null && streamer.live !== undefined) {
             var liveIndicator = streamer.live ? liveIndicatorDot : "";
 
             document.getElementById('titleContentHeader').innerHTML = followButton + streamerLink + liveIndicator;
-            document.getElementById('subTitleContentHeader').innerText = streamer.title ? streamer.title : "";
+            document.getElementById('subTitleContentHeader').innerText = subTitle;
         }
         else {
             document.getElementById('titleContentHeader').innerHTML = followButton + streamerLink;
-            document.getElementById('subTitleContentHeader').innerText = streamer.title ? streamer.title : "";
+            document.getElementById('subTitleContentHeader').innerText = subTitle;
 
             if (ENABLE_ONLINE_CALLS) {
                 followingOnline([streamer])
@@ -311,8 +435,16 @@
                             watchingStreamer = res[0];
                             var liveIndicator = watchingStreamer.live ? liveIndicatorDot : "";
 
+                            let streamTitle = watchingStreamer.title ? watchingStreamer.title : "";
+                            let category = watchingStreamer.category ? watchingStreamer.category : "";
+
+                            let subTitle = streamTitle;
+                            if (category !== "") {
+                                subTitle += " - " + category;
+                            }
+
                             document.getElementById('titleContentHeader').innerHTML = followButton + streamerLink + liveIndicator;
-                            document.getElementById('subTitleContentHeader').innerText = watchingStreamer.title ? watchingStreamer.title : "";
+                            document.getElementById('subTitleContentHeader').innerText = subTitle;
                         }
                     });
             }
