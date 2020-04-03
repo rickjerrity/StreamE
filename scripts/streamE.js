@@ -31,8 +31,8 @@ var defaultFollowing = [
     channelId: "UCP9tAErY_RlX4RFKssE4ogg"
   },
   {
-    username: 'cloakzy',
-    twitch: true
+    username: 'QueenEliminator',
+    mixer: true
   },
   {
     username: 'NICKMERCS',
@@ -48,6 +48,11 @@ var defaultFollowing = [
     twitch: true
   },
   {
+    username: "Valkyrae",
+    youtube: true,
+    channelId: "UCWxlUwW9BgGISaakjGM37aw"
+  },
+  {
     username: 'xQcOW',
     twitch: true
   },
@@ -56,7 +61,7 @@ var defaultFollowing = [
     mixer: true
   },
   {
-    username: 'sodapoppin',
+    username: 'Annemunition',
     twitch: true
   },
   {
