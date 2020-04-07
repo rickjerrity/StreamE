@@ -226,7 +226,7 @@ iframe {
   align-items: center;
 }
 
-#titleContentHeader a {
+#titleContentHeader a, .footerContent a {
   color: white;
 }
 
