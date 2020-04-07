@@ -226,7 +226,7 @@ iframe {
   align-items: center;
 }
 
-#titleContentHeader a {
+#titleContentHeader a, .footerContent a {
   color: white;
 }
 
@@ -247,6 +247,12 @@ iframe {
   overflow: hidden;
   padding: 10px;
   grid-area: mainContent;
+}
+
+#textContent {
+  padding: 10px;
+  height: 100%;
+  overflow-y: auto;
 }
 
 .footer {

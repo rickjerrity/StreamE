@@ -70,14 +70,50 @@
         <div class="mainContent shadow-inset-center" id="mainContent">
             <div id="textContent">
                 <p>
-                    Welcome to the jungle.
+                    StreamE is an easy way to watch your favorite live streamers across streaming platforms like Twitch, Mixer and YouTube.
+                    Use the search bar at the top of the page to search for streamers you like, click the plus sign next to their name to follow them for watching later, and click their name to pull up their channel.
                 </p>
+                <h3>Frequently Asked Questions</h3>
+                <ul>
+                    <li><h4>What are the plus (+) and minus (-) signs next to a streamer's name when searching and on the left side bar?</h4>
+                        <ul>
+                            <li>
+                                The plus (+) sign adds a streamer to your following list, which is the left side bar. The minus (-) sign removes a streamer for your following list.
+                            </li>
+                        </ul>
+                    </li>
+                    <li><h4>What is my following list?</h4>
+                        <ul>
+                            <li>
+                                The left side bar on the page (or below the search box on mobile view) is your following list. This is the list of streamers you're following on StreamE and is stored in your browser privately.
+                                Your following list also appears in the URL encoded as a hash after the pound (#) sign. These URLs/hashes are shareable with friends and other people, for easy sharing of entire following lists of streamers.
+                                Please note, this following list has no effect or relation to your personal account followings on Twitch, Mixer, or YouTube.
+                            </li>
+                        </ul>
+                    </li>
+                    <li><h4>What is the nasty, long string in the URL?</h4>
+                        <ul>
+                            <li>
+                                As mentioned in the above question, that is your personal list of streamers you're following encoded as a hash. You can bookmark/save the URL/hash for easy access later from another PC, or for sharing your
+                                list of favorite streamers with your friends.
+                            </li>
+                        </ul>
+                    </li>
+                    <li><h4>YouTube search results/online indicator is not working. What's wrong?</h4>
+                        <ul>
+                            <li>
+                                YouTube, unfortunately, has a rather low API rate-limit per day and we're subject to hit that rate-limit at times depending on site traffic. YouTube does take requests for increases in rate limits, and we do plan to
+                                apply for an increase if we continue to hit their API rate limit often.
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
             </div>
             <div id="videoContent"></div>
         </div>
         <div class="footer">
             <div class="footerContent">
-                <h4>StreamE.tv &copy; <span id="copyDate">2020</span></h4>
+                <h4>StreamE.tv &copy; <span id="copyDate">2020</span> - <a href="https://twitter.com/rickjerrity" target="_blank">@rickjerrity</a></h4>
             </div>
         </div>
     </div>
@@ -372,6 +408,8 @@
 
         clearVideo();
 
+        document.getElementById('textContent').style.display = 'none';
+
         watchingStreamer = streamer;
 
         if (streamer.mixer) {
@@ -501,7 +539,7 @@
 
         clearVideo();
 
-        document.getElementById('textContent').innerHTML = '<p>Welcome to the jungle.</p>';
+        document.getElementById('textContent').style.display = 'block';
 
         var liveIndicators = document.getElementsByClassName('liveIndicatorDot');
         while (liveIndicators[0]) {
