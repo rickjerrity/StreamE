@@ -114,7 +114,7 @@
         </div>
         <div class="footer">
             <div class="footerContent">
-                <h4>StreamE.tv &copy; <span id="copyDate">2020</span> - <a href="https://twitter.com/rickjerrity" target="_blank">@rickjerrity</a></h4>
+                <h4>StreamE.tv &copy; <span id="copyDate">2020</span> - <a href="#" onclick="resetPage(); return false;">FAQ</a> - <a href="https://twitter.com/rickjerrity" target="_blank">@rickjerrity</a></h4>
             </div>
         </div>
     </div>
@@ -124,8 +124,9 @@
 <script>
     var debouncedSearch = debounce(search, 350);
     var searchResults = [];
-    var following = defaultFollowing;
+    var following = [];
     var watchingStreamer;
+    var initialPageLoad = true;
 
     var followingOpen = true;
     var chatOpen = false;
@@ -350,6 +351,11 @@
                                 var uniqueStreamerId = getUniqueStreamerId(followed);
 
                                 document.getElementById(uniqueStreamerId).innerHTML += liveIndicatorDot;
+
+                                if (initialPageLoad && !watchingStreamer) {
+                                    initialPageLoad = false;
+                                    watchStreamer(followed);
+                                }
                             }
                         });
                     }
@@ -567,6 +573,9 @@
                 following = followingHashArr;
                 updateFollowingHash();
             }
+
+            fillFollowingList();
+            checkFollowingOnline();
         }
         else if (window.localStorage.getItem('following')) {
             var followingHash = window.localStorage.getItem('following');
@@ -583,6 +592,21 @@
                 following = followingHashArr;
                 window.location.hash = followingHash;
             }
+
+            fillFollowingList();
+            checkFollowingOnline();
+        }
+        else {
+            defaultFollowing()
+            .then((result) => {
+                    following = result;
+
+                    fillFollowingList();
+                    checkFollowingOnline();
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
         }
     }
 
@@ -612,10 +636,6 @@
             .addEventListener('search', () => {
                 clearSearchResults();
             });
-
-        fillFollowingList();
-
-        checkFollowingOnline();
 
         document.getElementById('copyDate').innerText = new Date().getFullYear();
     }
