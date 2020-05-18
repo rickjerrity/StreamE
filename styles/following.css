@@ -1,0 +1,84 @@
+.followBtn {
+  padding: 3px;
+  cursor: pointer;
+}
+
+.followingContainer {
+  padding-bottom: 3px;
+}
+
+.followingContainer:hover .stopFollowing {
+  display: block;
+}
+
+.followingUser {
+  display: inline-flex;
+  align-items: center;
+  font-weight: bold;
+  padding: 5px 0px;
+  cursor: pointer;
+}
+
+.stopFollowing {
+  display: none;
+  padding-left: 5px;
+}
+
+.stopFollowing:hover {
+  color: red;
+  cursor: pointer;
+}
+
+#following::-webkit-scrollbar {
+  width: 8px;
+}
+
+#following::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+#following::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+#following::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+#followingList {
+  padding-top: 10px;
+}
+
+#clearContainer {
+  display: flex;
+  justify-content: center;
+  padding-top: 10px;
+  padding-bottom: 3px;
+}
+
+#clearButton {
+  text-transform: uppercase;
+  background-color: #ffffff;
+  padding: 10px;
+  border: 2px solid black !important;
+  border-radius: 6px;
+  display: flex;
+  transition: all 0.3s ease 0s;
+  box-shadow: 0 3px #999;
+  border-radius: 50px;
+}
+
+#clearButton:hover {
+  background-color: whitesmoke;
+  color: red;
+  border-radius: 50px;
+  border: 2px solid red !important;
+  transition: all 0.3s ease 0s;
+  cursor: pointer;
+  box-shadow: 0 4px #999;
+}
+
+#clearButton:active {
+  box-shadow: 0 2px #666;
+  transform: translateY(2px);
+}
