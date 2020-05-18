@@ -15,21 +15,27 @@
     <meta http-equiv='X-UA-Compatible' content='IE=edge'>
     <title>StreamE</title>
     <meta name='viewport' content='width=device-width, initial-scale=1'>
-    <link rel="icon" href="./assets/favicon.ico" type="image/x-icon" />
+
     <link href="https://fonts.googleapis.com/css?family=Sen&display=swap" rel="stylesheet">
+
+    <link rel="icon" href="./assets/favicon.ico" type="image/x-icon" />
     <link rel='stylesheet' type='text/css' media='screen' href='./styles/main.css'>
+    <link rel='stylesheet' type='text/css' media='screen' href='./styles/streame.css'>
+    <link rel='stylesheet' type='text/css' media='screen' href='./styles/search.css'>
+    <link rel='stylesheet' type='text/css' media='screen' href='./styles/following.css'>
     <link rel='stylesheet' type='text/css' media='screen' href='./styles/shadow-inset.css'>
+
     <script src='./scripts/streamE.js'></script>
     <script src='./scripts/lz-string.min.js'></script>
 </head>
 <body>
     <div id="container">
-        <div class="navbar">
+        <div id="navbar">
             <div>
                 <div onclick="resetPage()"><img src="./assets/streame.png"></div>
             </div>
         </div>
-        <div class="search">
+        <div id="search">
             <div id="openCloseFollowing" class="openClose" onclick="toggleViews(true)">
                 <ion-icon id="closeFollowingArrow" name="arrow-back-circle-outline" size="large"></ion-icon>
                 <ion-icon id="openFollowingArrow" name="arrow-forward-circle-outline" size="large" style="display: none"></ion-icon>
@@ -48,13 +54,13 @@
                 <ion-icon id="closeChatBox" name="chatbox-outline" size="large" style="display: none"></ion-icon>
             </div>
         </div>
-        <div class="following" id="following">
+        <div id="following">
             <div id="followingList"></div>
-            <div class="clearContainer">
-                <button class="clearButton" onclick="clearFollowingHash()">Clear<ion-icon name="trash-outline"></ion-icon></button>
+            <div id="clearContainer">
+                <button id="clearButton" onclick="clearFollowingHash()">Clear<ion-icon name="trash-outline"></ion-icon></button>
             </div>
         </div>
-        <div class="chat" id="chat">
+        <div id="chat">
             <span id="youtubeChatWarning">YouTube does not support embedding live chat into websites. Chat will open in a new window.</span>
             <iframe id="chat_embed"
                     src=""
@@ -62,13 +68,13 @@
                     width="100%">
             </iframe>
         </div>
-        <div class="titleContent" id="titleContent">
+        <div id="titleContent">
             <h2 id="titleContentHeader"></h2>
         </div>
-        <div class="subTitleContent" id="subTitleContent">
+        <div id="subTitleContent">
             <h4 id="subTitleContentHeader"></h4>
         </div>
-        <div class="mainContent shadow-inset-center" id="mainContent">
+        <div class="shadow-inset-center" id="mainContent">
             <div id="textContent">
                 <p>
                     StreamE is an easy way to watch your favorite live streamers across streaming platforms like Twitch, Mixer and YouTube.
@@ -112,8 +118,8 @@
             </div>
             <div id="videoContent"></div>
         </div>
-        <div class="footer">
-            <div class="footerContent">
+        <div id="footer">
+            <div id="footerContent">
                 <h4>StreamE.tv &copy; <span id="copyDate">2020</span> - <a href="#" onclick="resetPage(); return false;">FAQ</a> - <a href="https://twitter.com/rickjerrity" target="_blank">@rickjerrity</a></h4>
             </div>
         </div>

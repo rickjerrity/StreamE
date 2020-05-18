@@ -14,20 +14,6 @@ iframe {
   border: 0;
 }
 
-.highlight {
-  color: #61ce70;
-}
-
-.liveIndicatorDot {
-  height: 10px;
-  width: 10px;
-  background-color: #61ce70;
-  border-radius: 50%;
-  display: inline-block;
-  margin-left: 5px;
-  margin-top: 2px;
-}
-
 #container {
   display: grid;
   height: 100vh;
@@ -61,7 +47,7 @@ iframe {
     margin-right: 0px !important;
   }
 
-  .search {
+  #search {
     justify-content: center !important;
   }
 
@@ -79,7 +65,7 @@ iframe {
     padding-top: 0px !important;
   }
 
-  .following {
+  #following {
     border: 1px solid black;
     border-radius: 10px 10px 0 0;
     display: block !important;
@@ -102,114 +88,31 @@ iframe {
   }
 }
 
-.navbar {
+#navbar {
   border-bottom: 1px solid black;
   display: flex;
   justify-content: center;
   grid-area: navbar;
 }
 
-.navbar img {
+#navbar img {
   height: 40px;
   margin: 5px;
   cursor: pointer;
 }
 
-#searchContainer {
-  margin-left: -200px;
-}
-
-.search {
-  grid-area: search;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.searchBox {
-  display: flex;
-  justify-content: center;
-  margin-top: 5px;
-}
-
-#clearSearch {
-  padding-left: 5px;
-  cursor: pointer;
-}
-
-#clearSearch:hover {
-  color: red;
-}
-
-.followBtn {
-  padding: 3px;
-  cursor: pointer;
-}
-
-.following {
+#following {
   border-right: 1px solid black;
   grid-area: following;
   overflow-x: hidden;
   min-width: 160px;
 }
 
-.following::-webkit-scrollbar {
-  width: 8px;
-}
-
-.following::-webkit-scrollbar-track {
-  background: #f1f1f1;
-}
-
-.following::-webkit-scrollbar-thumb {
-  background: #888;
-}
-
-.following::-webkit-scrollbar-thumb:hover {
-  background: #555;
-}
-
-#followingList {
-  padding-top: 10px;
-}
-
-.clearContainer {
+#search {
+  grid-area: search;
   display: flex;
-  justify-content: center;
-  padding-top: 10px;
-  padding-bottom: 3px;
-}
-
-.clearButton {
-  text-transform: uppercase;
-  background-color: #ffffff;
-  padding: 10px;
-  border: 2px solid black !important;
-  border-radius: 6px;
-  display: flex;
-  transition: all 0.3s ease 0s;
-  box-shadow: 0 3px #999;
-  border-radius: 50px;
-}
-
-.clearButton:hover {
-  background-color: whitesmoke;
-  color: red;
-  border-radius: 50px;
-  border: 2px solid red !important;
-  transition: all 0.3s ease 0s;
-  cursor: pointer;
-  box-shadow: 0 4px #999;
-}
-
-.clearButton:active {
-  box-shadow: 0 2px #666;
-  transform: translateY(2px);
-}
-
-.trashImg {
-  width: 15px;
-  height: 15px;
+  justify-content: space-between;
+  align-items: center;
 }
 
 #titleContent {
@@ -227,7 +130,8 @@ iframe {
   align-items: center;
 }
 
-#titleContentHeader a, .footerContent a {
+#titleContentHeader a,
+#footerContent a {
   color: white;
 }
 
@@ -243,7 +147,7 @@ iframe {
   margin: 10px 0px;
 }
 
-.mainContent {
+#mainContent {
   position: relative;
   overflow: hidden;
   padding: 10px;
@@ -256,20 +160,20 @@ iframe {
   overflow-y: auto;
 }
 
-.footer {
+#footer {
   border-top: 1px solid black;
   display: flex;
   justify-content: center;
   grid-area: footer;
 }
 
-.footerContent {
+#footerContent {
   align-self: flex-end;
   margin-block-start: 0px;
   margin-block-end: 0px;
 }
 
-.footerContent h4 {
+#footerContent h4 {
   margin: 5px 0px;
 }
 
@@ -277,67 +181,9 @@ iframe {
   height: 73vh;
 }
 
-#searchResults {
-  border: 1px solid black;
-  border-radius: 15px;
-  margin-top: 5px;
-  padding: 5px;
-  max-height: 400px;
-  overflow-y: auto;
-  position: absolute;
-  background-color: #3a3a3a;
-  z-index: 1;
-}
-
-.searchResult {
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  padding-right: 40px
-}
-
-.followingContainer {
-  padding-bottom: 3px;
-}
-
 .inlineContainer {
   display: inline-flex;
   align-items: center;
-}
-
-.followingUser {
-  display: inline-flex;
-  align-items: center;
-  font-weight: bold;
-  padding: 5px 0px;
-  cursor: pointer;
-}
-
-.followingContainer:hover .stopFollowing {
-  display: block;
-}
-
-.stopFollowing {
-  display: none;
-  padding-left: 5px;
-}
-
-.stopFollowing:hover {
-  color: red;
-  cursor: pointer;
-}
-
-.platformImg {
-  width: 25px;
-  height: 25px;
-  padding: 0px 3px;
-}
-
-.searchResultImg {
-  width: 25px;
-  height: 25px;
-  padding: 0px 3px;
-  border-radius: 50%;
 }
 
 #openCloseFollowing {
@@ -354,6 +200,7 @@ iframe {
 }
 
 #chat {
+  grid-area: chat;
   display: none;
 }
 
@@ -361,15 +208,4 @@ iframe {
   position: initial !important;
   top: initial !important;
   left: initial !important;
-}
-
-.chat {
-  grid-area: chat;
-}
-
-#youtubeChatWarning {
-  display: none;
-  text-align: center;
-  padding: 5px;
-  margin-top: 20px;
 }
