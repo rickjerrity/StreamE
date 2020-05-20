@@ -255,6 +255,11 @@
         newFollow += "<span>" + following.username + "</span>";
         newFollow += "</div>";
         newFollow += '<ion-icon name="remove-circle-outline" class="stopFollowing" onclick="stopFollowingStreamer(\'' + following.username + '\')"></ion-icon>';
+
+        if (following.live) {
+            newFollow += liveIndicatorDot;
+        }
+
         newFollow += '</div>';
         newFollow += "</div>";
 
@@ -351,19 +356,21 @@
                 .then((res) => {
                     if (res && res.length > 0) {
                         following = res;
+                        liveList = [];
 
                         res.forEach((followed) => {
                             if (followed.live) {
+                                liveList.push(followed);
                                 var uniqueStreamerId = getUniqueStreamerId(followed);
 
                                 document.getElementById(uniqueStreamerId).innerHTML += liveIndicatorDot;
-
-                                if (initialPageLoad && !watchingStreamer) {
-                                    initialPageLoad = false;
-                                    watchStreamer(followed);
-                                }
                             }
                         });
+
+                        if (initialPageLoad && !watchingStreamer) {
+                            initialPageLoad = false;
+                            watchStreamer(liveList[getRandomInt(0, liveList.length)]);
+                        }
                     }
                 });
         }
@@ -608,7 +615,6 @@
                     following = result;
 
                     fillFollowingList();
-                    checkFollowingOnline();
                 })
                 .catch((err) => {
                     console.log(err);
@@ -619,9 +625,19 @@
     function fillFollowingList() {
         document.getElementById('followingList').innerHTML = "";
 
+        let liveList = [];
         following.forEach((follower, index) => {
+            if (follower.live) {
+                liveList.push(follower);
+            }
+
             addFollowed(follower, index);
         });
+
+        if (liveList.length > 0 && initialPageLoad && !watchingStreamer) {
+            initialPageLoad = false;
+            watchStreamer(liveList[getRandomInt(0, liveList.length)]);
+        }
     }
 
     function clearFollowingHash() {
