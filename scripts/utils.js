@@ -1,9 +1,6 @@
-var FOLLOWING_ONLINE_URL =
-  'https://3xidp6ftp1.execute-api.us-west-2.amazonaws.com/streamE_followingOnline';
-var SEARCH_USERNAME_URL =
-  'https://3xidp6ftp1.execute-api.us-west-2.amazonaws.com/streamE_searchUsername';
-var DEFAULT_FOLLOWING_URL =
-  'https://3xidp6ftp1.execute-api.us-west-2.amazonaws.com/streamE_defaultFollowing';
+var FOLLOWING_ONLINE_URL = 'https://3xidp6ftp1.execute-api.us-west-2.amazonaws.com/streamE_followingOnline';
+var SEARCH_USERNAME_URL = 'https://3xidp6ftp1.execute-api.us-west-2.amazonaws.com/streamE_searchUsername';
+var DEFAULT_FOLLOWING_URL = 'https://3xidp6ftp1.execute-api.us-west-2.amazonaws.com/streamE_defaultFollowing';
 
 var ENABLE_ONLINE_CALLS = true;
 var ENABLE_SEARCH_CALLS = true;
@@ -23,29 +20,13 @@ var DEFAULT_FOLLOWING = [
     twitch: true,
   },
   {
-    username: 'shroud',
-    mixer: true,
-  },
-  {
-    username: 'DrDisrespect',
-    twitch: true,
-  },
-  {
     username: 'CouRage',
     youtube: true,
     channelId: 'UCrgTEmBuoObZiEXvZ6r3PQg',
   },
   {
-    username: 'QueenEliminator',
-    mixer: true,
-  },
-  {
     username: 'NICKMERCS',
     twitch: true,
-  },
-  {
-    username: 'Ninja',
-    mixer: true,
   },
   {
     username: 'xQcOW',
@@ -67,10 +48,6 @@ var DEFAULT_FOLLOWING = [
   {
     username: 'monstercat',
     twitch: true,
-  },
-  {
-    username: 'Lurxx',
-    mixer: true,
   },
   {
     username: 'ChilledCow',
@@ -113,13 +90,7 @@ function streamerSearch(streamer) {
 }
 
 function getUniqueStreamerId(streamer) {
-  var platform = streamer.twitch
-    ? 'twitch'
-    : streamer.mixer
-    ? 'mixer'
-    : streamer.youtube
-    ? 'youtube'
-    : '';
+  var platform = streamer.twitch ? 'twitch' : streamer.youtube ? 'youtube' : '';
 
   if (platform !== '') {
     return LZString.compressToBase64(streamer.username + platform);

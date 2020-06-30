@@ -8,7 +8,6 @@ var followingOpen = true;
 var chatOpen = false;
 
 var TWITCH_ROOT_URL = 'https://twitch.com/';
-var MIXER_ROOT_URL = 'https://mixer.com/';
 var YOUTUBE_ROOT_URL = 'https://youtube.com/channel/';
 
 var LIVE_INDICATOR_DOT = `<span class="liveIndicatorDot"></span>`;
@@ -19,10 +18,7 @@ function addSearchResult(searchResult, index) {
 
   if (searchResult.twitch) {
     newSearchResult += `<img src="./assets/TwitchGlitchPurple.svg" class="platformImg">`;
-  } else if (searchResult.mixer) {
-    newSearchResult += `<img src="./assets/MixerMerge_Dark.svg" class="platformImg">`;
-  }
-  if (searchResult.youtube) {
+  } else if (searchResult.youtube) {
     newSearchResult += `<img src="./assets/youtube_social_circle_white.png" class="platformImg">`;
   }
 
@@ -72,69 +68,39 @@ function toggleViews(toggleFollowingList, toggleChat) {
 
   var newContainer = '';
 
-  newContainer += `"${followingOpen ? 'navbar ' : ''}navbar${
-    chatOpen ? ' navbar' : ''
-  }"`;
+  newContainer += `"${followingOpen ? 'navbar ' : ''}navbar${chatOpen ? ' navbar' : ''}"`;
   newContainer += `'${followingView}search${chatView}'`;
   newContainer += `'${followingView}titleContent${chatView}'`;
   newContainer += `'${followingView}mainContent${chatView}'`;
   newContainer += `'${followingView}subTitleContent${chatView}'`;
-  newContainer += `'${followingOpen ? 'footer ' : ''}footer${
-    chatOpen ? ' footer' : ''
-  }'`;
+  newContainer += `'${followingOpen ? 'footer ' : ''}footer${chatOpen ? ' footer' : ''}'`;
 
   document.getElementById('container').style.gridTemplateAreas = newContainer;
 
   var firstColumn = followingOpen ? '200px ' : '';
-  var secondColumn =
-    followingOpen && chatOpen
-      ? '8.5fr'
-      : followingOpen
-      ? 'auto'
-      : chatOpen
-      ? '8.5fr'
-      : 'auto';
+  var secondColumn = followingOpen && chatOpen ? '8.5fr' : followingOpen ? 'auto' : chatOpen ? '8.5fr' : 'auto';
   var thirdColumn = chatOpen ? ' 1.5fr' : '';
 
-  document.getElementById('container').style.gridTemplateColumns =
-    firstColumn + secondColumn + thirdColumn;
+  document.getElementById('container').style.gridTemplateColumns = firstColumn + secondColumn + thirdColumn;
 
-  document.getElementById('following').style.display = followingOpen
-    ? 'block'
-    : 'none';
+  document.getElementById('following').style.display = followingOpen ? 'block' : 'none';
   document.getElementById('chat').style.display = chatOpen ? 'block' : 'none';
 
-  document.getElementById('openFollowingArrow').style.display = followingOpen
-    ? 'none'
-    : 'block';
-  document.getElementById('closeFollowingArrow').style.display = followingOpen
-    ? 'block'
-    : 'none';
+  document.getElementById('openFollowingArrow').style.display = followingOpen ? 'none' : 'block';
+  document.getElementById('closeFollowingArrow').style.display = followingOpen ? 'block' : 'none';
 
-  document.getElementById('openChatBox').style.display = chatOpen
-    ? 'none'
-    : 'block';
-  document.getElementById('closeChatBox').style.display = chatOpen
-    ? 'block'
-    : 'none';
+  document.getElementById('openChatBox').style.display = chatOpen ? 'none' : 'block';
+  document.getElementById('closeChatBox').style.display = chatOpen ? 'block' : 'none';
 
   var centerMarginLeft = followingOpen ? '-200px' : '0px';
   var centerMarginRight = chatOpen ? '-18%' : '0px';
 
-  document.getElementById(
-    'searchContainer'
-  ).style.marginLeft = centerMarginLeft;
-  document.getElementById(
-    'searchContainer'
-  ).style.marginRight = centerMarginRight;
+  document.getElementById('searchContainer').style.marginLeft = centerMarginLeft;
+  document.getElementById('searchContainer').style.marginRight = centerMarginRight;
   document.getElementById('titleContent').style.marginLeft = centerMarginLeft;
   document.getElementById('titleContent').style.marginRight = centerMarginRight;
-  document.getElementById(
-    'subTitleContent'
-  ).style.marginLeft = centerMarginLeft;
-  document.getElementById(
-    'subTitleContent'
-  ).style.marginRight = centerMarginRight;
+  document.getElementById('subTitleContent').style.marginLeft = centerMarginLeft;
+  document.getElementById('subTitleContent').style.marginRight = centerMarginRight;
 }
 
 function addFollowed(following, index) {
@@ -146,11 +112,7 @@ function addFollowed(following, index) {
 
   if (following.twitch) {
     newFollow += `<img src="./assets/TwitchGlitchPurple.svg" class="platformImg">`;
-  }
-  if (following.mixer) {
-    newFollow += `<img src="./assets/MixerMerge_Dark.svg" class="platformImg">`;
-  }
-  if (following.youtube) {
+  } else if (following.youtube) {
     newFollow += `<img src="./assets/youtube_social_circle_white.png" class="platformImg">`;
   }
 
@@ -180,10 +142,7 @@ function followStreamer(streamer) {
 
   addFollowed(streamer, following.length - 1);
 
-  if (
-    watchingStreamer &&
-    getUniqueStreamerId(watchingStreamer) === uniqueStreamerId
-  ) {
+  if (watchingStreamer && getUniqueStreamerId(watchingStreamer) === uniqueStreamerId) {
     document.getElementById('followerStreamer').remove();
 
     if (watchingStreamer.live) {
@@ -195,9 +154,7 @@ function followStreamer(streamer) {
         var streamerOnlineResult = res[0];
 
         if (streamerOnlineResult.live) {
-          document.getElementById(
-            uniqueStreamerId
-          ).innerHTML += LIVE_INDICATOR_DOT;
+          document.getElementById(uniqueStreamerId).innerHTML += LIVE_INDICATOR_DOT;
         }
       }
     });
@@ -211,13 +168,9 @@ function stopFollowingStreamer(streamerUsername) {
 
       document.getElementById(uniqueStreamerId + '_container').remove();
 
-      if (
-        watchingStreamer &&
-        getUniqueStreamerId(watchingStreamer) === uniqueStreamerId
-      ) {
+      if (watchingStreamer && getUniqueStreamerId(watchingStreamer) === uniqueStreamerId) {
         document.getElementById('titleContentHeader').innerHTML =
-          FOLLOW_WATCHING_STREAMER +
-          document.getElementById('titleContentHeader').innerHTML;
+          FOLLOW_WATCHING_STREAMER + document.getElementById('titleContentHeader').innerHTML;
       }
 
       following.splice(index, 1);
@@ -239,8 +192,6 @@ function updateFollowingHash() {
 
     if (followed.twitch) {
       followObj.twitch = true;
-    } else if (followed.mixer) {
-      followObj.mixer = true;
     } else if (followed.youtube) {
       followObj.youtube = true;
       followObj.channelId = followed.channelId;
@@ -249,9 +200,7 @@ function updateFollowingHash() {
     followingHashList.push(followObj);
   });
 
-  var followingHash = LZString.compressToBase64(
-    JSON.stringify(followingHashList)
-  );
+  var followingHash = LZString.compressToBase64(JSON.stringify(followingHashList));
 
   localStorage.setItem('following', followingHash);
   window.location.hash = followingHash;
@@ -318,11 +267,6 @@ function loadChatForStreamer(streamer) {
         'chat_embed'
       ).src = `https://www.twitch.tv/embed/${streamer.username}/chat?darkpopout&parent=${window.location.hostname}`;
       document.getElementById('youtubeChatWarning').style.display = 'none';
-    } else if (streamer.mixer) {
-      document.getElementById(
-        'chat_embed'
-      ).src = `https://mixer.com/embed/chat/${streamer.username}`;
-      document.getElementById('youtubeChatWarning').style.display = 'none';
     } else if (streamer.youtube) {
       if (streamer.videoId) {
         document.getElementById('chat_embed').src = '';
@@ -345,12 +289,7 @@ function watchStreamer(streamer) {
 
   watchingStreamer = streamer;
 
-  if (streamer.mixer) {
-    videoContent += `<iframe width="100%" height="100%" src="https://mixer.com/embed/player/${streamer.username}"></iframe><br />`;
-    streamerLink += MIXER_ROOT_URL + endOfStreamerLink;
-
-    document.getElementById('videoContent').innerHTML = videoContent;
-  } else if (streamer.twitch) {
+  if (streamer.twitch) {
     var twitchOptions = {
       width: '100%',
       height: '100%',
@@ -390,12 +329,10 @@ function watchStreamer(streamer) {
   if (streamer.live !== null && streamer.live !== undefined) {
     var liveIndicator = streamer.live ? LIVE_INDICATOR_DOT : '';
 
-    document.getElementById('titleContentHeader').innerHTML =
-      followButton + streamerLink + liveIndicator;
+    document.getElementById('titleContentHeader').innerHTML = followButton + streamerLink + liveIndicator;
     document.getElementById('subTitleContentHeader').innerText = subTitle;
   } else {
-    document.getElementById('titleContentHeader').innerHTML =
-      followButton + streamerLink;
+    document.getElementById('titleContentHeader').innerHTML = followButton + streamerLink;
     document.getElementById('subTitleContentHeader').innerText = subTitle;
 
     if (ENABLE_ONLINE_CALLS) {
@@ -404,20 +341,15 @@ function watchStreamer(streamer) {
           watchingStreamer = res[0];
           var liveIndicator = watchingStreamer.live ? LIVE_INDICATOR_DOT : '';
 
-          let streamTitle = watchingStreamer.title
-            ? watchingStreamer.title
-            : '';
-          let category = watchingStreamer.category
-            ? watchingStreamer.category
-            : '';
+          let streamTitle = watchingStreamer.title ? watchingStreamer.title : '';
+          let category = watchingStreamer.category ? watchingStreamer.category : '';
 
           let subTitle = streamTitle;
           if (category !== '') {
             subTitle += ' - ' + category;
           }
 
-          document.getElementById('titleContentHeader').innerHTML =
-            followButton + streamerLink + liveIndicator;
+          document.getElementById('titleContentHeader').innerHTML = followButton + streamerLink + liveIndicator;
           document.getElementById('subTitleContentHeader').innerText = subTitle;
         }
       });
@@ -490,9 +422,7 @@ function getFollowingHash() {
 
   if (window.location.hash) {
     try {
-      followingHashArr = JSON.parse(
-        LZString.decompressFromBase64(window.location.hash.substring(1))
-      );
+      followingHashArr = JSON.parse(LZString.decompressFromBase64(window.location.hash.substring(1)));
     } catch (ex) {
       console.log(ex);
     }
@@ -508,9 +438,7 @@ function getFollowingHash() {
     var followingHash = window.localStorage.getItem('following');
 
     try {
-      followingHashArr = JSON.parse(
-        LZString.decompressFromBase64(followingHash)
-      );
+      followingHashArr = JSON.parse(LZString.decompressFromBase64(followingHash));
     } catch (ex) {
       console.log(ex);
     }
@@ -559,8 +487,7 @@ function clearFollowingHash() {
 
   if (watchingStreamer) {
     document.getElementById('titleContent').innerHTML =
-      FOLLOW_WATCHING_STREAMER +
-      document.getElementById('titleContent').innerHTML;
+      FOLLOW_WATCHING_STREAMER + document.getElementById('titleContent').innerHTML;
   }
 }
 

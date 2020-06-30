@@ -4,11 +4,11 @@
 
 `Github Pages` repo for [StreamE.tv](https://streame.tv).
 
-`StreamE` lets you search for, follow, and watch live streamers from different streaming platforms like Twitch, Mixer, and YouTube all in one place.
+`StreamE` lets you search for, follow, and watch live streamers from different streaming platforms like Twitch and YouTube all in one place.
 
 ### Features
 
-* Unified search for Twitch, Mixer, and YouTube channels
+* Unified search for Twitch and YouTube channels
 * Ability to follow/unfollow streamers on all platforms
 * Online/live indicator for followed streamers
 * Bookmark-able/share-able live updating URLs/hashes for lists of streamers to follow
