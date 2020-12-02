@@ -326,14 +326,18 @@ function watchStreamer(streamer) {
     subTitle += ' - ' + category;
   }
 
+  if (streamer.youtube) {
+    subTitle = decodeEntities(subTitle);
+  }
+
+  document.getElementById('subTitleContentHeader').innerText = subTitle;
+
   if (streamer.live !== null && streamer.live !== undefined) {
     var liveIndicator = streamer.live ? LIVE_INDICATOR_DOT : '';
 
     document.getElementById('titleContentHeader').innerHTML = followButton + streamerLink + liveIndicator;
-    document.getElementById('subTitleContentHeader').innerText = subTitle;
   } else {
     document.getElementById('titleContentHeader').innerHTML = followButton + streamerLink;
-    document.getElementById('subTitleContentHeader').innerText = subTitle;
 
     if (ENABLE_ONLINE_CALLS) {
       followingOnline([streamer]).then((res) => {
@@ -347,6 +351,10 @@ function watchStreamer(streamer) {
           let subTitle = streamTitle;
           if (category !== '') {
             subTitle += ' - ' + category;
+          }
+
+          if (watchingStreamer.youtube) {
+            subTitle = decodeEntities(subTitle);
           }
 
           document.getElementById('titleContentHeader').innerHTML = followButton + streamerLink + liveIndicator;
